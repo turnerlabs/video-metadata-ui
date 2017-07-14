@@ -18,7 +18,6 @@ var express = require('express'),
     database = process.env.DB_NAME,
     app = express();
 
-console.log(bucket, host, user, password, database)
 if (!bucket || !user || !password || !host) {
   console.log("Must Provide BUCKET.");
   console.log("Must Provide DB_ENDPOINT.");
