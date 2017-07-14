@@ -1,4 +1,5 @@
 envvars
 node_modules
+public/videos/
 docker-compose.yml
 harbor-compose.yml
