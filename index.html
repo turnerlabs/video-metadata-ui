@@ -1,0 +1,104 @@
+<html>
+<head>
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.js"
+    integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="video">
+    <video class="video_player" id="vid" controls>
+        <source src="/stream/Chuck_history_reel_6.mp4" type=video/mp4>
+    </video>
+    <span id="currentTime"></span>
+  </div>
+  <div class="objects">
+    <h3>Labels</h3>
+    <ul id="currentLabels"></ul>
+  </div>
+  <div class="objects">
+    <h3>Celebs</h3>
+    <ul id="currentCelebs"></ul>
+  </div>
+
+  <script>
+  var currentInterval,
+      celebs = {},
+      labels = {};
+
+  $('#vid').bind('play', setTimeInterval);
+  $('#vid').bind('pause', clearTimeInterval);
+  $('#vid')[0].addEventListener("seeking", seeking);
+
+  /**
+   * These methods need to be refactored to by dynamic and not hardcode the video in
+   * */
+  $.ajax({
+    url: "/celebs/chuck_history_reel_7",
+    method: "GET"
+  }).done(function(data) {
+    console.log("Retrieved Celebs");
+    celebs = data;
+  });
+
+  $.ajax({
+    url: "/labels/chuck_history_reel_7",
+    method: "GET"
+  }).done(function(data) {
+    console.log("Retrieved Labels");
+    labels = data;
+  });
+
+  function setTimeInterval(e) {
+      currentInterval = setInterval(function() {
+            $('#currentTime').html(vid.currentTime);
+            var baseTime = Math.floor(vid.currentTime);
+            $('#currentLabels').html(getHTML(labels, baseTime));
+            $('#currentCelebs').html(getHTML(celebs, baseTime));
+      }, 100);
+  }
+
+  function getHTML(objects, baseTime) {
+
+    var HTMLString = '';
+    if (objects[baseTime]) {
+       HTMLString += '<ul>';
+       objects[baseTime].map(function(object) {
+           HTMLString += "<li>" + object + "</li>";
+       });
+       HTMLString += '</ul>';
+    }
+
+    return HTMLString;
+  }
+
+  function clearTimeInterval(e) {
+      clearInterval(currentInterval);
+  }
+
+  function seeking() {
+      $('#currentTime').html(vid.currentTime);
+  };
+  </script>
+</body>
+
+<style>
+
+.video_player {
+  width: 100%;
+}
+
+.video {
+  width: 1000px;
+  float: left;
+  width: 50%;
+}
+
+.objects {
+  margin-left: 5px;
+  float: left;
+  width: 24%;
+}
+</style>
+</html>
